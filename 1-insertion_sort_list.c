@@ -8,9 +8,9 @@
 void insertion_sort_list(listint_t **list)
 {
 	listint_t *cursor;
-	listint_t *next, *aux;
+	listint_t *next;
 	listint_t *prev;
-	listint_t *n_n;
+	listint_t *n_n, *p_p;
 	int cont = 1;
 
 	while (cont != 0)
@@ -20,7 +20,7 @@ void insertion_sort_list(listint_t **list)
 		{
 			if (cursor->n > cursor->next->n)
 			{
-				cont++;
+				cont = 1;
 				next = cursor->next;
 				prev = cursor->prev;
 				n_n = next->next;
@@ -32,28 +32,41 @@ void insertion_sort_list(listint_t **list)
 				next->next = cursor;
 				if (n_n)
 					n_n->prev = cursor;
+				cursor = cursor->prev;
 				print_list(*list);
 				break;
 			}
 		}
-		for (; cursor->prev != NULL; cursor = cursor->prev)
+		for (; cursor && cursor->prev; cursor = cursor->prev)
 		{
 			if (cursor->n < cursor->prev->n)
 			{
-				next = cursor->prev->next;
-				prev = cursor->prev->prev;
-				n_n = next->next;
-				aux = cursor->prev;
-				aux->next = n_n;
-				aux->prev = next;
-				if (prev)
-					prev->next = next;
-				next->prev = prev;
-				next->next = aux;
-				if (n_n)
-					n_n->prev = aux;
-				print_list(*list);
+				next = cursor->next;
+				prev = cursor->prev;
+				p_p = prev->prev;
+				cursor->next = prev;
+				cursor->prev = p_p;
+				if (p_p)
+					p_p->next = cursor;
+				if (next)
+					next->prev = prev;
+				prev->next = next;
+				prev->prev = cursor;
+				cursor = cursor->next;
+				if (cursor->prev->prev != NULL)
+				{
+					cont = 1;
+					print_list(*list);
+				}
+				else
+					cont = 2;
 			}
+		}
+		if (cursor->prev == NULL)
+		{
+			*list = cursor;
+			if (cont != 1 && cont != 0)
+				print_list(*list);
 		}
 	}
 }
