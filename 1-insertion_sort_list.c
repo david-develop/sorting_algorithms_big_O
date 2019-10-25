@@ -28,6 +28,8 @@ listint_t *first_swap(listint_t **list)
 			if (n_n)
 				n_n->prev = cursor;
 			cursor = cursor->prev;
+			if (cursor->prev == NULL)
+				*list = cursor;
 			print_list(*list);
 			break;
 		}
